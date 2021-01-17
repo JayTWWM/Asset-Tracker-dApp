@@ -19,24 +19,79 @@ import "./Library.sol";
 
 contract AssetTracker {
 
-    // // Asset mapping and counter
-    mapping(uint256 => Library.Asset) public AssetStore;
-    uint256 public assetCount = 0;
+    // Asset mapping
+    mapping(string => Library.Asset) AssetStore;
 
-    // Identity mapping and counter
-    mapping(address => Library.Identity) public IdentityStore;
+    // Identity mapping
+    mapping(address => Library.Identity) IdentityStore;
+    mapping(string => address) private IdentityLookup;
 
     // Create Asset
     function createAsset(
-        string memory _assetUid
+        string memory _assetUid,
+        string memory _random
     ) public returns (uint256) {
-        // Requires and assets
-        assetCount++;
-        string memory acc = createKey();
-        AssetStore[assetCount] = Library.Asset(_assetUid, acc, msg.sender, true);
+        string memory accer = IdentityStore[msg.sender].position;
+        require(keccak256(abi.encodePacked((accer))) == keccak256(abi.encodePacked(("Manufacturer"))),"You're not a manufacturer!");
+        string memory details = string(abi.encodePacked(IdentityStore[msg.sender].email, IdentityStore[msg.sender].name));
+        string memory acc = createKey(_random,_assetUid,details);
         IdentityStore[msg.sender].assetCount++;
-        IdentityStore[msg.sender].ownedAssets[IdentityStore[msg.sender].assetCount] = AssetStore[assetCount];
+        AssetStore[_assetUid] = Library.Asset(IdentityStore[msg.sender].assetCount,_assetUid, acc, msg.sender, true, true);
+        IdentityStore[msg.sender].ownedAssets[IdentityStore[msg.sender].assetCount] = AssetStore[_assetUid];
         emit AssetCreate(_assetUid);
+    }
+
+    // Get Asset Key
+    function getAssetKey(string memory _assetUid) public view returns (string memory) {
+        Library.Asset storage curr = AssetStore[_assetUid];
+        require(curr.ownerAddress == msg.sender,"You're not the owner!");
+        require(curr.isGenuine,"The asset isn't genuine!");
+        require(curr.isVerified,"The asset isn't verified!");
+        return curr.key;
+    }
+
+    // Verification of asset
+    function verifyAsset(string memory _assetUid, string memory _key) public returns (uint256) {
+        Library.Asset storage curr = AssetStore[_assetUid];
+        require(curr.ownerAddress == msg.sender,"You're not the owner!");
+        require(curr.isGenuine,"The asset isn't genuine!");
+        string memory acc = AssetStore[_assetUid].key;
+        string memory _ownerEmail = IdentityStore[msg.sender].email;
+        if (keccak256(abi.encodePacked((acc))) == keccak256(abi.encodePacked((_key)))) {
+            AssetStore[_assetUid].isVerified = true;
+            emit AssetVerificationSuccessful(_ownerEmail,_assetUid);
+        } else {
+            AssetStore[_assetUid].isGenuine = false;
+            emit AssetVerificationFailed(_ownerEmail,_assetUid);
+        }
+    }
+
+    // Transfer ownership
+    function transferOwnership(string memory _assetUid, string memory _receiverEmail) public returns (uint256) {
+        Library.Asset storage curr = AssetStore[_assetUid];
+        require(curr.ownerAddress == msg.sender,"You're not the owner!");
+        require(curr.isGenuine,"The asset isn't genuine!");
+        require(curr.isVerified,"The asset isn't verified!");
+        string memory _senderEmail = IdentityStore[msg.sender].email;
+        address acc = IdentityLookup[_receiverEmail];
+        delete IdentityStore[msg.sender].ownedAssets[curr.ownerFlag];
+        AssetStore[_assetUid].ownerAddress = acc;
+        AssetStore[_assetUid].isVerified = false;
+        IdentityStore[acc].assetCount++;
+        AssetStore[_assetUid].ownerFlag = IdentityStore[acc].assetCount;
+        IdentityStore[acc].ownedAssets[IdentityStore[acc].assetCount] = AssetStore[_assetUid];
+        emit AssetOwnershipTransfer(_senderEmail,_receiverEmail);
+    }
+
+    // Sell to end consumer
+    function sellToEndConsumer(string memory _assetUid)  public returns (uint256) {
+        string memory accer = IdentityStore[msg.sender].position;
+        require(keccak256(abi.encodePacked((accer))) == keccak256(abi.encodePacked(("Retailer"))),"You're not a retailer!");
+        Library.Asset storage curr = AssetStore[_assetUid];
+        require(curr.ownerAddress == msg.sender,"You're not the owner!");
+        string memory _sellerEmail = IdentityStore[msg.sender].email;
+        delete IdentityStore[msg.sender].ownedAssets[curr.ownerFlag];
+        emit SoldToEndConsumer(_assetUid,_sellerEmail);
     }
 
     // Sign-up function
@@ -46,6 +101,7 @@ contract AssetTracker {
         string memory _password,
         string memory _position
     ) public returns (uint256) {
+        require(IdentityLookup[_email] == address(0),"This email is already used!");
         require(IdentityStore[msg.sender].addr == address(0),"You Already Have An Account!");
         Library.Identity storage newIdentity = IdentityStore[msg.sender];
         newIdentity.name = _name;
@@ -54,6 +110,7 @@ contract AssetTracker {
         newIdentity.position = _position;
         newIdentity.addr = msg.sender;
         newIdentity.assetCount = 0;
+        IdentityLookup[_email] = msg.sender;
         emit IdentityCreate(_name, _email, _position);
     }
 
@@ -68,53 +125,35 @@ contract AssetTracker {
         emit IdentityLogin(_name, _email, _position);
     }
 
-    // create key for asset
-    function createKey() private pure returns (string memory) {
-        // To be implemented
-        return "Key";
+    // Create key for asset
+    function createKey(string memory _random, string memory _assetUid, string memory _details) private view returns (string memory) {
+        return bytes32ToString(keccak256(abi.encodePacked(_random, _assetUid, _details, block.number)));
     }
 
-    // // Check if address exists
-    // function checkAddressExists(address addr) private view returns (bool) {
-    //     for (uint256 i = 1; i <= identityCount; i++) {
-    //         address acc = IdentityStore[i].addresser;
-    //         if (keccak256(abi.encodePacked((acc))) == keccak256(abi.encodePacked((addr)))) {
-    //             return true;
-    //         }
-    //     }
-    //     return false;
-    // }
+    // Bytes32 to string
+    function bytes32ToString(bytes32 _bytes32) public pure returns (string memory) {
+        uint8 i = 0;
+        while(i < 32 && _bytes32[i] != 0) {
+            i++;
+        }
+        bytes memory bytesArray = new bytes(i);
+        for (i = 0; i < 32 && _bytes32[i] != 0; i++) {
+            bytesArray[i] = _bytes32[i];
+        }
+        return string(bytesArray);
+    }
 
-    // // Check if email exists
-    // function checkEmailExists(string memory _email) private view returns (bool) {
-    //     for (uint256 i = 1; i <= identityCount; i++) {
-    //         string memory acc = IdentityStore[i].email;
-    //         if (keccak256(abi.encodePacked((acc))) == keccak256(abi.encodePacked((_email)))) {
-    //             return true;
-    //         }
-    //     }
-    //     return false;
-    // }
+    // Asset sold to end consumer
+    event SoldToEndConsumer(string assetUid, string sellerEmail);
 
-    // // Get email's index
-    // function getEmailIndex(string memory _email) private view returns (uint) {
-    //     for (uint256 i = 1; i <= identityCount; i++) {
-    //         string memory acc = IdentityStore[i].email;
-    //         if (keccak256(abi.encodePacked((acc))) == keccak256(abi.encodePacked((_email)))) {
-    //             return i;
-    //         }
-    //     }
-    // }
+    // Asset Verification Successful
+    event AssetVerificationSuccessful(string ownerEmail, string assetUid);
 
-    // // Get owner's index
-    // function getOwnerIndex(address addr) private view returns (uint) {
-    //     for (uint256 i = 1; i <= identityCount; i++) {
-    //         address acc = IdentityStore[i].addresser;
-    //         if (keccak256(abi.encodePacked((acc))) == keccak256(abi.encodePacked((addr)))) {
-    //             return i;
-    //         }
-    //     }
-    // }
+    // Asset Verification Failed
+    event AssetVerificationFailed(string ownerEmail, string assetUid);
+
+    // Asset Ownership Transfer Event
+    event AssetOwnershipTransfer(string senderEmail, string receiverEmail);
 
     // Asset Create Event
     event AssetCreate(string assetUid);

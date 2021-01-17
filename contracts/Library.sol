@@ -27,9 +27,11 @@ library Library {
         mapping (uint => Asset) ownedAssets;                    // list of owned assets
     }
     struct Asset {
+        uint ownerFlag;             // owner's asset key
         string assetUid;            // unique id
         string key;                 // verification key
         address ownerAddress;       // current owner's address(beta)
         bool isGenuine;             // genuine flag
+        bool isVerified;            // verification flag
     }
 }
