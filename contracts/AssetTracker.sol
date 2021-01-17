@@ -1,27 +1,43 @@
+// SPDX-License-Identifier: Apache-2.0
+// 
+// Copyright 2021 Jay Mehta
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// 
+// http://www.apache.org/licenses/LICENSE-2.0
+// 
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 pragma solidity >=0.5.0 <=0.7.4;
 import "./Library.sol";
 
 contract AssetTracker {
 
     // // Asset mapping and counter
-    // mapping(uint256 => Library.Asset) public AssetStore;
-    // uint256 public assetCount = 0;
+    mapping(uint256 => Library.Asset) public AssetStore;
+    uint256 public assetCount = 0;
 
     // Identity mapping and counter
     mapping(address => Library.Identity) public IdentityStore;
 
-    // // Create Asset
-    // function createAsset(
-    //     string memory _assetUid
-    // ) public returns (uint256) {
-    //     // Requires and assets
-    //     assetCount++;
-    //     AssetStore[assetCount] = AssetLibrary.Asset(_assetUid, "key", msg.sender, true);
-    //     uint256 ind = getOwnerIndex(msg.sender);
-    //     IdentityStore[ind].assetCount++;
-    //     IdentityStore[ind].ownedAssets[IdentityStore[ind].assetCount] = AssetStore[assetCount];
-    //     emit AssetCreate(_assetUid,"key");
-    // }
+    // Create Asset
+    function createAsset(
+        string memory _assetUid
+    ) public returns (uint256) {
+        // Requires and assets
+        assetCount++;
+        string memory acc = createKey();
+        AssetStore[assetCount] = Library.Asset(_assetUid, acc, msg.sender, true);
+        IdentityStore[msg.sender].assetCount++;
+        IdentityStore[msg.sender].ownedAssets[IdentityStore[msg.sender].assetCount] = AssetStore[assetCount];
+        emit AssetCreate(_assetUid);
+    }
 
     // Sign-up function
     function createIdentity(
@@ -50,6 +66,12 @@ contract AssetTracker {
         string memory _email = IdentityStore[msg.sender].email;
         string memory _position = IdentityStore[msg.sender].position;
         emit IdentityLogin(_name, _email, _position);
+    }
+
+    // create key for asset
+    function createKey() private pure returns (string memory) {
+        // To be implemented
+        return "Key";
     }
 
     // // Check if address exists
@@ -94,8 +116,8 @@ contract AssetTracker {
     //     }
     // }
 
-    // // Asset Create Event
-    // event AssetCreate(string assetUid, string key);
+    // Asset Create Event
+    event AssetCreate(string assetUid);
 
     // Sign-up Event
     event IdentityCreate(string name, string email, string position);
