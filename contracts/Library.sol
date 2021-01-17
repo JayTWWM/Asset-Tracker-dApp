@@ -22,7 +22,7 @@ library Library {
         string email;                                           // email id
         string password;                                        // password
         string position;                                        // position in supply chain(beta)
-        address addr;                                           // address(beta)
+        address addr;                                           // address
         uint assetCount;                                        // number of assets owned
         mapping (uint => Asset) ownedAssets;                    // list of owned assets
     }
@@ -30,7 +30,7 @@ library Library {
         uint ownerFlag;             // owner's asset key
         string assetUid;            // unique id
         string key;                 // verification key
-        address ownerAddress;       // current owner's address(beta)
+        address ownerAddress;       // current owner's address
         bool isGenuine;             // genuine flag
         bool isVerified;            // verification flag
     }
