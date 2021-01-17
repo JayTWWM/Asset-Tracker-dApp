@@ -67,7 +67,7 @@ contract AssetTracker {
     }
 
     // Transfer ownership
-    function transferOwnership(string memory _assetUid, string memory _receiverEmail) public returns (uint256) {
+    function transferOwnership(string memory _assetUid, string memory _receiverEmail, string memory _random) public returns (uint256) {
         Library.Asset storage curr = AssetStore[_assetUid];
         require(curr.ownerAddress == msg.sender,"You're not the owner!");
         require(curr.isGenuine,"The asset isn't genuine!");
@@ -76,6 +76,9 @@ contract AssetTracker {
         address acc = IdentityLookup[_receiverEmail];
         delete IdentityStore[msg.sender].ownedAssets[curr.ownerFlag];
         AssetStore[_assetUid].ownerAddress = acc;
+        string memory _details = string(abi.encodePacked(IdentityStore[acc].email, IdentityStore[acc].name));
+        string memory keyer = createKey(_random,_assetUid,_details);
+        AssetStore[_assetUid].key = keyer;
         AssetStore[_assetUid].isVerified = false;
         IdentityStore[acc].assetCount++;
         AssetStore[_assetUid].ownerFlag = IdentityStore[acc].assetCount;
