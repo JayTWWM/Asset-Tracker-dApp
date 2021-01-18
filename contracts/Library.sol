@@ -33,5 +33,6 @@ library Library {
         address ownerAddress;       // current owner's address
         bool isGenuine;             // genuine flag
         bool isVerified;            // verification flag
+        uint quantity;              // quantity of the asset batch
     }
 }

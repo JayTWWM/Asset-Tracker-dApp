@@ -28,22 +28,25 @@ contract AssetTracker {
 
     // Create Asset
     function createAsset(
+        uint quantity,
         string memory _assetUid,
         string memory _random
     ) public returns (uint256) {
+        require(IdentityStore[msg.sender].addr != address(0),"You Don't Have An Account!");
         string memory accer = IdentityStore[msg.sender].position;
         require(keccak256(abi.encodePacked((accer))) == keccak256(abi.encodePacked(("Manufacturer"))),"You're not a manufacturer!");
         require(AssetStore[_assetUid].ownerAddress == address(0),"Try a different UID!");
         string memory details = string(abi.encodePacked(IdentityStore[msg.sender].email, IdentityStore[msg.sender].name));
         string memory acc = createKey(_random,_assetUid,details);
         IdentityStore[msg.sender].assetCount++;
-        AssetStore[_assetUid] = Library.Asset(IdentityStore[msg.sender].assetCount,_assetUid, acc, msg.sender, true, true);
+        AssetStore[_assetUid] = Library.Asset(IdentityStore[msg.sender].assetCount,_assetUid, acc, msg.sender, true, true, quantity);
         IdentityStore[msg.sender].ownedAssets[IdentityStore[msg.sender].assetCount] = AssetStore[_assetUid];
-        emit AssetCreate(_assetUid,IdentityStore[msg.sender].email);
+        emit AssetCreate(_assetUid,IdentityStore[msg.sender].email,quantity);
     }
 
     // Get Asset Key
     function getAssetKey(string memory _assetUid) public view returns (string memory) {
+        require(IdentityStore[msg.sender].addr != address(0),"You Don't Have An Account!");
         require(AssetStore[_assetUid].ownerAddress == address(0),"Asset does not exist!");
         Library.Asset storage curr = AssetStore[_assetUid];
         require(curr.ownerAddress == msg.sender,"You're not the owner!");
@@ -52,8 +55,29 @@ contract AssetTracker {
         return curr.key;
     }
 
+    // Split asset into two
+    function splitAsset(string memory _assetUid, uint div, string memory _newAssetUid, string memory _random) public returns (uint256) {
+        require(IdentityStore[msg.sender].addr != address(0),"You Don't Have An Account!");
+        require(AssetStore[_assetUid].ownerAddress == address(0),"Asset does not exist!");
+        Library.Asset storage curr = AssetStore[_assetUid];
+        require(curr.ownerAddress == msg.sender,"You're not the owner!");
+        require(curr.isGenuine,"The asset isn't genuine!");
+        require(curr.isVerified,"The asset isn't verified!");
+        require(curr.quantity>div && div>0,"Insufficient Assets");
+        require(AssetStore[_assetUid].ownerAddress == address(0),"Try a different UID!");
+        uint ogQty = curr.quantity;
+        AssetStore[_assetUid].quantity = ogQty - div;
+        string memory details = string(abi.encodePacked(IdentityStore[msg.sender].email, IdentityStore[msg.sender].name));
+        string memory acc = createKey(_random,_newAssetUid,details);
+        IdentityStore[msg.sender].assetCount++;
+        AssetStore[_newAssetUid] = Library.Asset(IdentityStore[msg.sender].assetCount,_newAssetUid, acc, msg.sender, true, true, div);
+        IdentityStore[msg.sender].ownedAssets[IdentityStore[msg.sender].assetCount] = AssetStore[_newAssetUid];
+        emit AssetSplit(_assetUid,_newAssetUid,IdentityStore[msg.sender].email,div);
+    }
+
     // Verification of asset
     function verifyAsset(string memory _assetUid, string memory _key, string memory _random) public returns (uint256) {
+        require(IdentityStore[msg.sender].addr != address(0),"You Don't Have An Account!");
         require(AssetStore[_assetUid].ownerAddress == address(0),"Asset does not exist!");
         Library.Asset storage curr = AssetStore[_assetUid];
         require(curr.ownerAddress == msg.sender,"You're not the owner!");
@@ -74,6 +98,7 @@ contract AssetTracker {
 
     // Transfer ownership
     function transferOwnership(string memory _assetUid, string memory _receiverEmail) public returns (uint256) {
+        require(IdentityStore[msg.sender].addr != address(0),"You Don't Have An Account!");
         require(AssetStore[_assetUid].ownerAddress == address(0),"Asset does not exist!");
         require(IdentityLookup[_receiverEmail] != address(0),"This email does not exists!");
         Library.Asset storage curr = AssetStore[_assetUid];
@@ -93,6 +118,7 @@ contract AssetTracker {
 
     // Sell to end consumer
     function sellToEndConsumer(string memory _assetUid)  public returns (uint256) {
+        require(IdentityStore[msg.sender].addr != address(0),"You Don't Have An Account!");
         require(AssetStore[_assetUid].ownerAddress == address(0),"Asset does not exist!");
         string memory accer = IdentityStore[msg.sender].position;
         require(keccak256(abi.encodePacked((accer))) == keccak256(abi.encodePacked(("Retailer"))),"You're not a retailer!");
@@ -166,7 +192,10 @@ contract AssetTracker {
     event AssetOwnershipTransfer(string senderEmail, string receiverEmail, string assetUid);
 
     // Asset Create Event
-    event AssetCreate(string assetUid, string creatorEmail);
+    event AssetCreate(string assetUid, string creatorEmail, uint qunatity);
+
+    // Asset Create Event
+    event AssetSplit(string assetUid, string newAssetUid, string creatorEmail, uint qunatity);
 
     // Sign-up Event
     event IdentityCreate(string name, string email, string position);
