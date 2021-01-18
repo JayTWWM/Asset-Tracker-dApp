@@ -8,7 +8,7 @@ function signin() {
             if (result.status === true) {
                 alert("Success");
                 console.log(result);
-                window.location.href = "./dashboard.html";
+                window.location.href = "./asset_creation.html";
             }
         });
     return false;
@@ -30,7 +30,25 @@ function signup() {
             if (result.status === true) {
                 alert("Success");
                 console.log(result);
-                window.location.href = "./dashboard.html";
+                window.location.href = "./asset_creation.html";
+            }
+        });
+    return false;
+}
+
+function asset_creation() {
+    var asset_creation_form = document.getElementById("asset_creation_form");
+    var asset_name = asset_creation_form['asset_name'];
+    var asset_number = asset_creation_form['asset_number'];
+    console.log(asset_name.value);
+    console.log(asset_number.value);
+    AssetTrackerContract.methods.createAsset(asset_number.value, asset_name.value, 'Random')
+        .send()
+        .then(result => {
+            if (result.status === true) {
+                alert("Success");
+                console.log(result);
+                window.location.href = "./sample.html";
             }
         });
     return false;
