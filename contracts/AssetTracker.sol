@@ -299,13 +299,12 @@ contract AssetTracker {
     }
 
     // Get asset count of user
-    function getUSerAssetCount() public view returns (uint256) {
+    function getUserAssetCount() public view returns (uint) {
         require(
             IdentityStore[msg.sender].addr != address(0),
             "You Don't Have An Account!"
         );
-        uint256 ctr = IdentityStore[msg.sender].assetCount;
-        return ctr;
+        return IdentityStore[msg.sender].assetCount;
     }
 
     // Get Assets of a user

@@ -1,3 +1,5 @@
+var assetCount = 0;
+
 function signin() {
     var signin_form = document.getElementById("sign-in-form");
     var password = signin_form['signin_password'];
@@ -51,5 +53,17 @@ function asset_creation() {
                 window.location.href = "./sample.html";
             }
         });
+    return false;
+}
+
+function get_assets() {
+    AssetTrackerContract.methods.getUserAssetCount().call((error, response) => {
+        if (error) {
+            console.log(error);
+        } else {
+            console.log(response);
+            assetCount = response;
+        }
+    });
     return false;
 }

@@ -23,6 +23,7 @@
         "truffle-contract": "3.0.6"
     },
     "dependencies": {
+        "@truffle/hdwallet-provider": "^1.2.1",
         "body-parser": "^1.19.0",
         "clientside-require": "^4.7.2",
         "ejs": "^3.0.1",
