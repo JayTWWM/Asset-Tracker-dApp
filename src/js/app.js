@@ -1,4 +1,4 @@
-var assetCount = 0;
+var assetId;
 
 function signin() {
     var signin_form = document.getElementById("sign-in-form");
@@ -38,6 +38,31 @@ function signup() {
     return false;
 }
 
+function transferSetUp(res) {
+    window.location.href = "./transfer_ownership.html?assetId=" + res;
+}
+
+function transferOwnership() {
+    var queryString = decodeURIComponent(window.location.search);
+    queryString = queryString.substring(1);
+    var queries = queryString.split("&");
+    assetId = queries[0].split("=")[1];
+    var signin_form = document.getElementById("asset_transfer_form");
+    var email = signin_form['email_transfer'];
+    console.log(assetId);
+    console.log(email.value);
+    AssetTrackerContract.methods.transferOwnership(assetId, email.value)
+        .send()
+        .then(result => {
+            if (result.status === true) {
+                alert("Success");
+                console.log(result);
+                window.location.href = "./asset_list.html";
+            }
+        });
+    return false;
+}
+
 function asset_creation() {
     var asset_creation_form = document.getElementById("asset_creation_form");
     var asset_name = asset_creation_form['asset_name'];
@@ -50,20 +75,8 @@ function asset_creation() {
             if (result.status === true) {
                 alert("Success");
                 console.log(result);
-                window.location.href = "./sample.html";
+                window.location.href = "./asset_list.html";
             }
         });
-    return false;
-}
-
-function get_assets() {
-    AssetTrackerContract.methods.getUserAssetCount().call((error, response) => {
-        if (error) {
-            console.log(error);
-        } else {
-            console.log(response);
-            assetCount = response;
-        }
-    });
     return false;
 }

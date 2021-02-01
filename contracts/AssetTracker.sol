@@ -78,7 +78,7 @@ contract AssetTracker {
             "You Don't Have An Account!"
         );
         require(
-            AssetStore[_assetUid].ownerAddress == address(0),
+            AssetStore[_assetUid].ownerAddress != address(0),
             "Asset does not exist!"
         );
         Library.Asset storage curr = AssetStore[_assetUid];
@@ -100,7 +100,7 @@ contract AssetTracker {
             "You Don't Have An Account!"
         );
         require(
-            AssetStore[_assetUid].ownerAddress == address(0),
+            AssetStore[_assetUid].ownerAddress != address(0),
             "Asset does not exist!"
         );
         Library.Asset storage curr = AssetStore[_assetUid];
@@ -152,7 +152,7 @@ contract AssetTracker {
             "You Don't Have An Account!"
         );
         require(
-            AssetStore[_assetUid].ownerAddress == address(0),
+            AssetStore[_assetUid].ownerAddress != address(0),
             "Asset does not exist!"
         );
         Library.Asset storage curr = AssetStore[_assetUid];
@@ -190,7 +190,11 @@ contract AssetTracker {
             "You Don't Have An Account!"
         );
         require(
-            AssetStore[_assetUid].ownerAddress == address(0),
+            keccak256(abi.encodePacked((IdentityStore[msg.sender].email))) != keccak256(abi.encodePacked((_receiverEmail))),
+            "Cannot transfer ownership to yourself!"
+        );
+        require(
+            AssetStore[_assetUid].ownerAddress != address(0),
             "Asset does not exist!"
         );
         require(
@@ -198,7 +202,7 @@ contract AssetTracker {
             "This email does not exists!"
         );
         Library.Asset storage curr = AssetStore[_assetUid];
-        require(curr.ownerAddress == msg.sender, "You're not the owner!");
+        require(curr.ownerAddress == msg.sender,"You are not the owner");
         require(curr.isGenuine, "The asset isn't genuine!");
         require(curr.isVerified, "The asset isn't verified!");
         string memory _senderEmail = IdentityStore[msg.sender].email;
@@ -223,7 +227,7 @@ contract AssetTracker {
             "You Don't Have An Account!"
         );
         require(
-            AssetStore[_assetUid].ownerAddress == address(0),
+            AssetStore[_assetUid].ownerAddress != address(0),
             "Asset does not exist!"
         );
         string memory accer = IdentityStore[msg.sender].position;
