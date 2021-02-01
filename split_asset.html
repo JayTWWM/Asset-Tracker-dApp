@@ -22,10 +22,14 @@
 <body>
     <div class="login-box">
         <h2>Split Assets</h2>
-        <form id="asset_creation_form" action="#">
+        <form id="asset_split_form" onsubmit="return asset_split()" action="#">
             <div class="user-box">
-                <input type="number" name="" required="" id="asset_transfer">
+                <input type="number" name="" required="" id="asset_quantity">
                 <label>Quantity to be split</label>
+            </div>
+            <div class="user-box">
+                <input type="text" name="" required="" id="asset_name">
+                <label>Name of new asset</label>
             </div>
 
             <a>

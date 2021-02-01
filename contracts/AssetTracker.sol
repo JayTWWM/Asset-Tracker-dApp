@@ -109,11 +109,12 @@ contract AssetTracker {
         require(curr.isVerified, "The asset isn't verified!");
         require(curr.quantity > div && div > 0, "Insufficient Assets");
         require(
-            AssetStore[_assetUid].ownerAddress == address(0),
+            AssetStore[_newAssetUid].ownerAddress == address(0),
             "Try a different UID!"
         );
         uint256 ogQty = curr.quantity;
         AssetStore[_assetUid].quantity = ogQty - div;
+        IdentityStore[msg.sender].ownedAssets[AssetStore[_assetUid].ownerFlag].quantity = ogQty - div;
         string memory details = string(
             abi.encodePacked(
                 IdentityStore[msg.sender].email,
@@ -171,10 +172,13 @@ contract AssetTracker {
                 )
             );
             string memory keyer = createKey(_random, _assetUid, _details);
+            IdentityStore[msg.sender].ownedAssets[AssetStore[_assetUid].ownerFlag].key = keyer;
+            IdentityStore[msg.sender].ownedAssets[AssetStore[_assetUid].ownerFlag].isVerified = true;
             AssetStore[_assetUid].key = keyer;
             AssetStore[_assetUid].isVerified = true;
             emit AssetVerificationSuccessful(_ownerEmail, _assetUid);
         } else {
+            IdentityStore[msg.sender].ownedAssets[AssetStore[_assetUid].ownerFlag].isGenuine = false;
             AssetStore[_assetUid].isGenuine = false;
             emit AssetVerificationFailed(_ownerEmail, _assetUid);
         }
@@ -293,13 +297,8 @@ contract AssetTracker {
         string memory _random,
         string memory _assetUid,
         string memory _details
-    ) private view returns (string memory) {
-        return
-            bytes32ToString(
-                keccak256(
-                    abi.encodePacked(_random, _assetUid, _details, block.number)
-                )
-            );
+    ) internal view returns (string memory) {
+        return uintToString(uint(keccak256(abi.encodePacked(_random, _assetUid, _details, block.number))));
     }
 
     // Get asset count of user
@@ -341,21 +340,25 @@ contract AssetTracker {
         }
     }
 
-    // Bytes32 to string
-    function bytes32ToString(bytes32 _bytes32)
-        public
-        pure
-        returns (string memory)
-    {
-        uint256 i = 0;
-        while (i < 32 && _bytes32[i] != 0) {
-            i++;
+    // Uint to string
+    function uintToString(uint _i) internal pure returns (string memory) {
+        uint temp = _i;
+        if (temp == 0) {
+            return "0";
         }
-        bytes memory bytesArray = new bytes(i);
-        for (i = 0; i < 32 && _bytes32[i] != 0; i++) {
-            bytesArray[i] = _bytes32[i];
+        uint j = temp;
+        uint len;
+        while (j != 0) {
+            len++;
+            j /= 10;
         }
-        return string(bytesArray);
+        bytes memory bstr = new bytes(len);
+        uint k = len - 1;
+        while (temp != 0) {
+            bstr[k--] = byte(uint8(48 + temp % 10));
+            temp /= 10;
+        }
+        return string(bstr);
     }
 
     // Asset sold to end consumer
