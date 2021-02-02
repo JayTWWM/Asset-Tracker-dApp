@@ -105,15 +105,19 @@ function asset_split() {
     console.log(assetId);
     console.log(asset_name.value);
     console.log(asset_quantity.value);
-    AssetTrackerContract.methods.splitAsset(assetId, asset_quantity.value, asset_name.value, 'Random')
-        .send()
-        .then(result => {
-            if (result.status === true) {
-                alert("Success");
-                console.log(result);
-                window.location.href = "./asset_list.html";
-            }
-        });
+    if (assetId != 'None') {
+        AssetTrackerContract.methods.splitAsset(assetId, asset_quantity.value, asset_name.value, 'Random')
+            .send()
+            .then(result => {
+                if (result.status === true) {
+                    alert("Success");
+                    console.log(result);
+                    window.location.href = "./asset_list.html";
+                }
+            });
+    } else {
+        alert("Use different name!");
+    }
     return false;
 }
 
@@ -123,15 +127,19 @@ function asset_creation() {
     var asset_number = asset_creation_form['asset_number'];
     console.log(asset_name.value);
     console.log(asset_number.value);
-    AssetTrackerContract.methods.createAsset(asset_number.value, asset_name.value, 'Random')
-        .send()
-        .then(result => {
-            if (result.status === true) {
-                alert("Success");
-                console.log(result);
-                window.location.href = "./asset_list.html";
-            }
-        });
+    if (asset_name.value != "None") {
+        AssetTrackerContract.methods.createAsset(asset_number.value, asset_name.value, 'Random')
+            .send()
+            .then(result => {
+                if (result.status === true) {
+                    alert("Success");
+                    console.log(result);
+                    window.location.href = "./asset_list.html";
+                }
+            });
+    } else {
+        alert("Use different name!");
+    }
     return false;
 }
 
