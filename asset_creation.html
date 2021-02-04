@@ -1,9 +1,12 @@
-<html lang="en">
+<!DOCTYPE html>
+<html>
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="./src/css/asset_creation.css" />
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
 
     <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js@1.0.0-beta.34/dist/web3.js" charset="utf-8"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Faker/3.1.0/faker.js"></script>
@@ -16,29 +19,44 @@
     <script src="src/js/vendor/jquery-1.12.0.min.js"></script>
     <script src="./vendor/jquery/dist/jquery.min.js"></script>
 
-    <title>Document</title>
+    <title>Create Assets</title>
 </head>
 
 <body>
-    <div class="login-box">
-        <h2>Create An Asset</h2>
-        <form onsubmit="return asset_creation()" id="asset_creation_form" action="#">
-            <div class="user-box">
-                <input type="text" name="" required="" id="asset_name">
-                <label>Asset Name</label>
+    <div id="mySidenav" class="sidenav">
+        <center>
+            <h1 style="color: aliceblue;">Asset Tracker</h1>
+        </center>
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <a href="./asset_list.html">My Assets</a>
+        <a href="./asset_creation.html">Create Asset</a>
+        <a href="./index.html">Log Out</a>
+    </div>
+
+    <span onclick="openNav()"><i class="fa fa-bars fa-lg"></i></span>
+    <div id="main">
+        <center>
+            <div class="login-box">
+                <h2>Create An Asset</h2>
+                <form onsubmit="return asset_creation()" id="asset_creation_form" action="#">
+                    <div class="user-box">
+                        <input type="text" name="" required="" id="asset_name">
+                        <label>Asset Name</label>
+                    </div>
+                    <div class="user-box">
+                        <input type="number" name="" required="" id="asset_number">
+                        <label>Asset Quantity</label>
+                    </div>
+                    <a>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <input type="submit" value="Submit" class="btn solid" />
+                    </a>
+                </form>
             </div>
-            <div class="user-box">
-                <input type="number" name="" required="" id="asset_number">
-                <label>Asset Quantity</label>
-            </div>
-            <a>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <input type="submit" value="Submit" class="btn solid" />
-            </a>
-        </form>
+        </center>
     </div>
 </body>
 

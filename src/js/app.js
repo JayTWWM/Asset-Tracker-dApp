@@ -10,7 +10,7 @@ function signin() {
             if (result.status === true) {
                 alert("Success");
                 console.log(result);
-                window.location.href = "./asset_creation.html";
+                window.location.href = "./asset_list.html";
             }
         });
     return false;
@@ -32,7 +32,7 @@ function signup() {
             if (result.status === true) {
                 alert("Success");
                 console.log(result);
-                window.location.href = "./asset_creation.html";
+                window.location.href = "./asset_list.html";
             }
         });
     return false;
@@ -170,4 +170,14 @@ function verify_key() {
         throw "Faulty QR Code!";
     }
     return false;
+}
+
+function openNav() {
+    document.getElementById("mySidenav").style.width = "250px";
+    document.getElementById("main").style.marginLeft = "250px";
+}
+
+function closeNav() {
+    document.getElementById("mySidenav").style.width = "0";
+    document.getElementById("main").style.marginLeft = "0";
 }

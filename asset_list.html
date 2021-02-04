@@ -27,34 +27,46 @@
 </head>
 
 <body>
-    <br>
-    <br>
-    <center><input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for product.." style="width: 50%;"></center>
-    <br>
-    <ul id="product-list-vertical"></ul>
-    <script>
-        function myFunction() {
-            var input, filter, ul, li, a, i, txtValue;
-            input = document.getElementById('myInput');
-            filter = input.value.toUpperCase();
-            ul = document.getElementById("product-list-vertical");
-            li = ul.getElementsByTagName('li');
-            console.log(li);
-            pd = document.getElementsByClassName("product-details");
-            for (i = 0; i < pd.length; i++) {
-                a = pd[i].getElementsByTagName("h2");
-                txtValue = a[0].innerHTML;
-                console.log(txtValue);
-                if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                    li[i].style.display = "";
-                } else {
-                    li[i].style.display = "none";
+    <div id="mySidenav" class="sidenav">
+        <center>
+            <h1 style="color: aliceblue;">Asset Tracker</h1>
+        </center>
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <a href="./asset_list.html">My Assets</a>
+        <a href="./asset_creation.html">Create Asset</a>
+        <a href="./index.html">Log Out</a>
+    </div>
+
+    <span onclick="openNav()"><i class="fa fa-bars fa-lg"></i></span>
+    <div id="main">
+        <br>
+        <br>
+        <center><input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for product.." style="width: 50%;"></center>
+        <br>
+        <ul id="product-list-vertical"></ul>
+        <script>
+            function myFunction() {
+                var input, filter, ul, li, a, i, txtValue;
+                input = document.getElementById('myInput');
+                filter = input.value.toUpperCase();
+                ul = document.getElementById("product-list-vertical");
+                li = ul.getElementsByTagName('li');
+                console.log(li);
+                pd = document.getElementsByClassName("product-details");
+                for (i = 0; i < pd.length; i++) {
+                    a = pd[i].getElementsByTagName("h2");
+                    txtValue = a[0].innerHTML;
+                    console.log(txtValue);
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        li[i].style.display = "";
+                    } else {
+                        li[i].style.display = "none";
+                    }
                 }
             }
-        }
-    </script>
+        </script>
 
-
+    </div>
 </body>
 
 </html>
