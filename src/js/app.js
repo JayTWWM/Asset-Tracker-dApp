@@ -106,7 +106,7 @@ function asset_split() {
     console.log(asset_name.value);
     console.log(asset_quantity.value);
     if (assetId != 'None') {
-        AssetTrackerContract.methods.splitAsset(assetId, asset_quantity.value, asset_name.value, 'Random')
+        AssetTrackerContract.methods.splitAsset(assetId, asset_quantity.value, asset_name.value, Math.random().toString(36).substring(7))
             .send()
             .then(result => {
                 if (result.status === true) {
@@ -128,7 +128,7 @@ function asset_creation() {
     console.log(asset_name.value);
     console.log(asset_number.value);
     if (asset_name.value != "None") {
-        AssetTrackerContract.methods.createAsset(asset_number.value, asset_name.value, 'Random')
+        AssetTrackerContract.methods.createAsset(asset_number.value, asset_name.value, Math.random().toString(36).substring(7))
             .send()
             .then(result => {
                 if (result.status === true) {
@@ -158,7 +158,7 @@ function verify_key() {
     const code = window.jsQR(myData.data, myData.width, myData.height);
     if (code) {
         console.log("Found QR code", code);
-        AssetTrackerContract.methods.verifyAsset(assetId, code.data, 'random').send()
+        AssetTrackerContract.methods.verifyAsset(assetId, code.data, Math.random().toString(36).substring(7)).send()
             .then(result => {
                 if (result.status === true) {
                     alert("Success");
