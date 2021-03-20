@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Dashboard</title>
+
+    <link rel="stylesheet" href="./src/css/product-list-vertical.css">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
+
+    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js@1.0.0-beta.34/dist/web3.js" charset="utf-8"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Faker/3.1.0/faker.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="./index.js" type="text/javascript"></script>
+    <script src="./src/js/app.js" type="text/javascript"></script>
+
+    <script src="src/js/vendor/modernizr-2.8.3.min.js"></script>
+    <script src="src/js/vendor/jquery-1.12.0.min.js"></script>
+    <script src="./vendor/jquery/dist/jquery.min.js"></script>
+    <script src="./src/js/lister.js"></script>
+
+</head>
+
+<body>
+    <!-- <div id="mySidenav" class="sidenav">
+        <center>
+            <h1 style="color: aliceblue;">Asset Tracker</h1>
+        </center>
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <a href="./asset_list.html">My Assets</a>
+        <a href="./asset_creation.html">Create Asset</a>
+        <a href="./index.html">Log Out</a>
+    </div>
+
+    <span onclick="openNav()"><i class="fa fa-bars fa-lg"></i></span> -->
+    <div id="main">
+        <br>
+        <br>
+        <center><input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for product.." style="width: 50%;"></center>
+        <br>
+        <ul id="product-list-vertical"></ul>
+        <script>
+            function myFunction() {
+                var input, filter, ul, li, a, i, txtValue;
+                input = document.getElementById('myInput');
+                filter = input.value.toUpperCase();
+                ul = document.getElementById("product-list-vertical");
+                li = ul.getElementsByTagName('li');
+                console.log(li);
+                pd = document.getElementsByClassName("product-details");
+                for (i = 0; i < pd.length; i++) {
+                    a = pd[i].getElementsByTagName("h2");
+                    txtValue = a[0].innerHTML;
+                    console.log(txtValue);
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        li[i].style.display = "";
+                    } else {
+                        li[i].style.display = "none";
+                    }
+                }
+            }
+        </script>
+
+    </div>
+</body>
+
+</html>

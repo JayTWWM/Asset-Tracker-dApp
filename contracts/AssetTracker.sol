@@ -21,9 +21,32 @@ contract AssetTracker {
     // Asset mapping
     mapping(string => Library.Asset) AssetStore;
 
+    // Failed Verification mapping and count
+    mapping(uint => Library.Failure) public FailureStore;
+    uint public FailureCount;
+
     // Identity mapping
     mapping(address => Library.Identity) IdentityStore;
     mapping(string => address) private IdentityLookup;
+
+    // Arbitrator's address
+    address public arbitrator;
+
+    constructor (address _arbitrator) public {
+        arbitrator = _arbitrator;
+    }
+
+    // Get Failure Count
+    function getFailureCount() public view returns (uint256) {
+        require(msg.sender == arbitrator,"You're not the arbitrator");
+        return FailureCount;
+    }
+
+    // Get Failure
+    function getFailure(uint _id) public view returns (string memory, string memory, string memory) {
+        require(msg.sender == arbitrator,"You're not the arbitrator");
+        return (FailureStore[_id].uid,IdentityStore[FailureStore[_id].owner].name,IdentityStore[FailureStore[_id].owner].email);
+    }
 
     // Create Asset
     function createAsset(
@@ -180,6 +203,8 @@ contract AssetTracker {
         } else {
             IdentityStore[msg.sender].ownedAssets[AssetStore[_assetUid].ownerFlag].isGenuine = false;
             AssetStore[_assetUid].isGenuine = false;
+            FailureCount++;
+            FailureStore[FailureCount] = Library.Failure(FailureCount,msg.sender,_assetUid);
             emit AssetVerificationFailed(_ownerEmail, _assetUid);
         }
     }
@@ -302,12 +327,12 @@ contract AssetTracker {
     }
 
     // Get asset count of user
-    function getUserAssetCount() public view returns (uint) {
+    function getUserAssetCount() public view returns (uint,string memory) {
         require(
             IdentityStore[msg.sender].addr != address(0),
             "You Don't Have An Account!"
         );
-        return IdentityStore[msg.sender].assetCount;
+        return (IdentityStore[msg.sender].assetCount,IdentityStore[msg.sender].position);
     }
 
     // Get Assets of a user

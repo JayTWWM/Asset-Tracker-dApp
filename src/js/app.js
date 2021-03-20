@@ -38,6 +38,18 @@ function signup() {
     return false;
 }
 
+function sellToEnd(res) {
+    AssetTrackerContract.methods.sellToEndConsumer(res)
+        .send()
+        .then(result => {
+            if (result.status === true) {
+                alert("Success");
+                console.log(result);
+                window.location.href = "./asset_list.html";
+            }
+        });
+}
+
 function transferSetUp(res) {
     window.location.href = "./transfer_ownership.html?assetId=" + res;
 }

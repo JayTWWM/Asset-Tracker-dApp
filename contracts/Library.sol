@@ -35,4 +35,9 @@ library Library {
         bool isVerified;            // verification flag
         uint quantity;              // quantity of the asset batch
     }
+    struct Failure {
+        uint id;                    // id of the failure
+        address owner;                 // address of the owner
+        string uid;                 // uid of the asset
+    }
 }

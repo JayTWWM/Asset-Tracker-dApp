@@ -10,7 +10,8 @@ jQuery(document).ready(function($) {
                 console.log(error);
             } else {
                 console.log(response);
-                assetCount = response;
+                assetCount = response[0];
+                userCat = response[1];
             }
         });
     }, 1000);
@@ -25,18 +26,34 @@ jQuery(document).ready(function($) {
                     console.log(response);
                     if (response[0] != "None") {
                         var row;
-                        if (response[1] && response[2]) {
-                            row =
-                                "<li><div class='product-details'> <span class='product-compare'><i class='fa fa-check-circle fa-lg' style='color:green'></i></span><span class='product-compare'><i class='fa fa-check-circle fa-lg' style='color:green'></i></span><h2>" + response[0] + "</h2><tr><td><button onClick='transferSetUp(\"" + response[0] + "\")'>Transfer</button></td><td><button onClick='splitSetUp(\"" + response[0] + "\")'>Split</button></td><td><button onClick='keySetUp(\"" + response[0] + "\")'>Key</button></td></tr><p class='product-price'>" + response[3] + "</p></div></li>";
-                        } else if (response[1]) {
-                            row =
-                                "<li><div class='product-details'> <span class='product-compare'><i class='fa fa-check-circle fa-lg' style='color:green'></i></span><span class='product-compare'><i class='fa fa-times-circle fa-lg' style='color:red'></i></span><h2>" + response[0] + "</h2><tr><td><button onClick='transferSetUp(\"" + response[0] + "\")'>Transfer</button></td><td><button onClick='splitSetUp(\"" + response[0] + "\")'>Split</button></td><td><button onClick='keySetUp(\"" + response[0] + "\")'>Key</button></td></tr><p class='product-price'>" + response[3] + "</p></div></li>";
-                        } else if (response[2]) {
-                            row =
-                                "<li><div class='product-details'> <span class='product-compare'><i class='fa fa-times-circle fa-lg' style='color:red'></i></span><span class='product-compare'><i class='fa fa-check-circle fa-lg' style='color:green'></i></span><h2>" + response[0] + "</h2><tr><td><button onClick='transferSetUp(\"" + response[0] + "\")'>Transfer</button></td><td><button onClick='splitSetUp(\"" + response[0] + "\")'>Split</button></td><td><button onClick='verifySetUp(\"" + response[0] + "\")'>Verify</button></td></tr><p class='product-price'>" + response[3] + "</p></div></li>";
+                        if(userCat == "Retailer") {
+                            if (response[1] && response[2]) {
+                                row =
+                                    "<li><div class='product-details'> <span class='product-compare'><i class='fa fa-check-circle fa-lg' style='color:green'></i></span><span class='product-compare'><i class='fa fa-check-circle fa-lg' style='color:green'></i></span><h2>" + response[0] + "</h2><tr><td><button onClick='transferSetUp(\"" + response[0] + "\")'>Transfer</button></td><td><button onClick='splitSetUp(\"" + response[0] + "\")'>Split</button></td><td><button onClick='keySetUp(\"" + response[0] + "\")'>Key</button></td><td><button onClick='sellToEnd(\"" + response[0] + "\")'>Sell To End Consumer</button></td></tr><p class='product-price'>" + response[3] + "</p></div></li>";
+                            } else if (response[1]) {
+                                row =
+                                    "<li><div class='product-details'> <span class='product-compare'><i class='fa fa-check-circle fa-lg' style='color:green'></i></span><span class='product-compare'><i class='fa fa-times-circle fa-lg' style='color:red'></i></span><h2>" + response[0] + "</h2><tr><td><button onClick='transferSetUp(\"" + response[0] + "\")'>Transfer</button></td><td><button onClick='splitSetUp(\"" + response[0] + "\")'>Split</button></td><td><button onClick='keySetUp(\"" + response[0] + "\")'>Key</button></td><td><button onClick='sellToEnd(\"" + response[0] + "\")'>Sell To End Consumer</button></td></tr><p class='product-price'>" + response[3] + "</p></div></li>";
+                            } else if (response[2]) {
+                                row =
+                                    "<li><div class='product-details'> <span class='product-compare'><i class='fa fa-times-circle fa-lg' style='color:red'></i></span><span class='product-compare'><i class='fa fa-check-circle fa-lg' style='color:green'></i></span><h2>" + response[0] + "</h2><tr><td><button onClick='transferSetUp(\"" + response[0] + "\")'>Transfer</button></td><td><button onClick='splitSetUp(\"" + response[0] + "\")'>Split</button></td><td><button onClick='verifySetUp(\"" + response[0] + "\")'>Verify</button></td></tr><p class='product-price'>" + response[3] + "</p></div></li>";
+                            } else {
+                                row =
+                                    "<li><div class='product-details'> <span class='product-compare'><i class='fa fa-times-circle fa-lg' style='color:red'></i></span><span class='product-compare'><i class='fa fa-times-circle fa-lg' style='color:red'></i></span><h2>" + response[0] + "</h2><tr><td><button onClick='transferSetUp(\"" + response[0] + "\")'>Transfer</button></td><td><button onClick='splitSetUp(\"" + response[0] + "\")'>Split</button></td><td><button onClick='verifySetUp(\"" + response[0] + "\")'>Verify</button></td></tr><p class='product-price'>" + response[3] + "</p></div></li>";
+                            }
                         } else {
-                            row =
-                                "<li><div class='product-details'> <span class='product-compare'><i class='fa fa-times-circle fa-lg' style='color:red'></i></span><span class='product-compare'><i class='fa fa-times-circle fa-lg' style='color:red'></i></span><h2>" + response[0] + "</h2><tr><td><button onClick='transferSetUp(\"" + response[0] + "\")'>Transfer</button></td><td><button onClick='splitSetUp(\"" + response[0] + "\")'>Split</button></td><td><button onClick='verifySetUp(\"" + response[0] + "\")'>Verify</button></td></tr><p class='product-price'>" + response[3] + "</p></div></li>";
+                            if (response[1] && response[2]) {
+                                row =
+                                    "<li><div class='product-details'> <span class='product-compare'><i class='fa fa-check-circle fa-lg' style='color:green'></i></span><span class='product-compare'><i class='fa fa-check-circle fa-lg' style='color:green'></i></span><h2>" + response[0] + "</h2><tr><td><button onClick='transferSetUp(\"" + response[0] + "\")'>Transfer</button></td><td><button onClick='splitSetUp(\"" + response[0] + "\")'>Split</button></td><td><button onClick='keySetUp(\"" + response[0] + "\")'>Key</button></td></tr><p class='product-price'>" + response[3] + "</p></div></li>";
+                            } else if (response[1]) {
+                                row =
+                                    "<li><div class='product-details'> <span class='product-compare'><i class='fa fa-check-circle fa-lg' style='color:green'></i></span><span class='product-compare'><i class='fa fa-times-circle fa-lg' style='color:red'></i></span><h2>" + response[0] + "</h2><tr><td><button onClick='transferSetUp(\"" + response[0] + "\")'>Transfer</button></td><td><button onClick='splitSetUp(\"" + response[0] + "\")'>Split</button></td><td><button onClick='keySetUp(\"" + response[0] + "\")'>Key</button></td></tr><p class='product-price'>" + response[3] + "</p></div></li>";
+                            } else if (response[2]) {
+                                row =
+                                    "<li><div class='product-details'> <span class='product-compare'><i class='fa fa-times-circle fa-lg' style='color:red'></i></span><span class='product-compare'><i class='fa fa-check-circle fa-lg' style='color:green'></i></span><h2>" + response[0] + "</h2><tr><td><button onClick='transferSetUp(\"" + response[0] + "\")'>Transfer</button></td><td><button onClick='splitSetUp(\"" + response[0] + "\")'>Split</button></td><td><button onClick='verifySetUp(\"" + response[0] + "\")'>Verify</button></td></tr><p class='product-price'>" + response[3] + "</p></div></li>";
+                            } else {
+                                row =
+                                    "<li><div class='product-details'> <span class='product-compare'><i class='fa fa-times-circle fa-lg' style='color:red'></i></span><span class='product-compare'><i class='fa fa-times-circle fa-lg' style='color:red'></i></span><h2>" + response[0] + "</h2><tr><td><button onClick='transferSetUp(\"" + response[0] + "\")'>Transfer</button></td><td><button onClick='splitSetUp(\"" + response[0] + "\")'>Split</button></td><td><button onClick='verifySetUp(\"" + response[0] + "\")'>Verify</button></td></tr><p class='product-price'>" + response[3] + "</p></div></li>";
+                            }
                         }
                         $("#product-list-vertical").append(row);
                     }
